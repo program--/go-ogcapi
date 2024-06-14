@@ -1,0 +1,4 @@
+npx @redocly/openapi-cli@latest bundle spec/ogcapi-features/core/examples/openapi/ogcapi-features-1-example1.yaml 
+> out.yml
+
+oapi-codegen --config=config.yaml out.yml   
