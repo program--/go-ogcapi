@@ -22,7 +22,7 @@ func TestEmptyPoint(t *testing.T) {
 	}
 
 	if !empty_point.Empty() {
-		t.Error("Point with len(data) == 0 returned !Empty()\n")
+		t.Error("Empty point returned !Empty()\n")
 	}
 
 	if empty_point.Dimensions() != geom.XY {

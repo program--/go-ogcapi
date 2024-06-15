@@ -13,7 +13,7 @@ func NewPoint(dims DimsType, data []float64) *Point {
 	return pt
 }
 
-func (p *Point) Type() GeomType {
+func (*Point) Type() GeomType {
 	return POINT
 }
 

@@ -13,8 +13,12 @@ func NewLineString(dims DimsType, data []float64) *LineString {
 	return line
 }
 
-func (l *LineString) Type() GeomType {
+func (*LineString) Type() GeomType {
 	return LINESTRING
+}
+
+func (l *LineString) NumPoints() int {
+	return len(l.data) / l.Stride()
 }
 
 func (l *LineString) PointAt(idx int) (*Point, error) {
@@ -25,8 +29,4 @@ func (l *LineString) PointAt(idx int) (*Point, error) {
 	start := idx * l.Stride()
 	end := start + l.Stride()
 	return NewPoint(l.dims, l.data[start:end]), nil
-}
-
-func (l *LineString) NumPoints() int {
-	return len(l.data) / l.Stride()
 }
