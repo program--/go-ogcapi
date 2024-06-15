@@ -2,21 +2,23 @@ package geom
 
 import "fmt"
 
+// TODO: Tests
 type Polygon struct {
 	coordsD2
 }
 
 func NewPolygon(dims DimsType, data [][]float64) *Polygon {
 	poly := new(Polygon)
-	poly.data = make([]float64, 0)
-	poly.offsets = make([]int, 0, len(data))
-	for _, slice := range data {
-		poly.offsets = append(poly.offsets, len(slice))
-		poly.data = append(poly.data, slice...)
-	}
-
+	poly.data, poly.offsets = deflateD2(data)
 	return poly
 }
+
+func NewPolygonFlat(dims DimsType, data []float64, offsets []int) *Polygon {
+	poly := new(Polygon)
+	poly.data, poly.offsets = data, offsets
+	return poly
+}
+
 func (*Polygon) Type() GeomType {
 	return POLYGON
 }

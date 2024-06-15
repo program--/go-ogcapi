@@ -80,3 +80,52 @@ func (c *coordsD0) Stride() int {
 		return 4
 	}
 }
+
+//lint:ignore U1000 Ignore unused function temporarily
+func inflateD2(data []float64, offsets []int) [][]float64 {
+	coords := make([][]float64, len(offsets))
+
+	start := 0
+	for i, offset := range offsets {
+		coords[i] = data[start:offset]
+		start = offset
+	}
+	return coords
+}
+
+//lint:ignore U1000 Ignore unused function temporarily
+func inflateD3(data []float64, offsets [][]int) [][][]float64 {
+	coords := make([][][]float64, len(offsets))
+	start := 0
+	for i, goffset := range offsets {
+		end := goffset[len(goffset)-1]
+		coords[i] = inflateD2(data[start:end], goffset)
+		start = end
+	}
+
+	return coords
+}
+
+func deflateD2(coords [][]float64) ([]float64, []int) {
+	data := make([]float64, 0)
+	offsets := make([]int, 0, len(coords))
+	for _, slice := range coords {
+		offsets = append(offsets, len(slice))
+		data = append(data, slice...)
+	}
+
+	return data, offsets
+}
+
+func deflateD3(coords [][][]float64) ([]float64, [][]int) {
+	data := make([]float64, 0)
+	offsets := make([][]int, len(coords))
+
+	var slice []float64 = nil
+	for i, nested := range coords {
+		slice, offsets[i] = deflateD2(nested)
+		data = append(data, slice...)
+	}
+
+	return data, offsets
+}

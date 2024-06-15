@@ -2,6 +2,7 @@ package geom
 
 import "fmt"
 
+// TODO: Tests
 type MultiPoint struct {
 	coordsD1
 }
