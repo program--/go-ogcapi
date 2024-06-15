@@ -1,32 +1,55 @@
 package geom
 
+/*
+Internal coordinates format is based heavily on
+https://github.com/twpayne/go-geom, which is distributed
+under a BSD-2-Clause license.
+*/
+
+// Zero-dimensional coordinates (Points)
 type coordsD0 struct {
 	dims DimsType
 	data []float64
 }
 
+// One-dimensional coordinates (LineString, MultiPoint)
 type coordsD1 struct {
 	coordsD0
 }
 
+// Two-dimensional coordinates (Polygon, MultiLineString)
 type coordsD2 struct {
 	coordsD1
+
+	// Offset array
+	//
+	// Each element of this holds
+	// the ending index of a set of coordinates.
 	offsets []int
 }
 
+// Three-dimensional coordinates (MultiPolygon)
 type coordsD3 struct {
 	coordsD1
+
+	// Jagged offset array
+	//
+	// Each element (i.e. each []int) of this
+	// holds the ring offsets for a polygon.
 	offsets [][]int
 }
 
+// Return a slice of the flat coordinates.
 func (c *coordsD0) Coords() []float64 {
 	return c.data
 }
 
+// Returns true if the backing data array is nil or has no elements.
 func (c *coordsD0) Empty() bool {
 	return c.data == nil || len(c.data) == 0
 }
 
+// Returns the coordinate dimensions (not the shape dimension).
 func (c *coordsD0) Dimensions() DimsType {
 	return c.dims
 }
