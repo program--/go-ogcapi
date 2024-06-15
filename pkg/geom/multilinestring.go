@@ -2,19 +2,20 @@ package geom
 
 import "fmt"
 
+// TODO: Tests
 type MultiLineString struct {
 	coordsD2
 }
 
 func NewMultiLineString(dims DimsType, data [][]float64) *MultiLineString {
 	ml := new(MultiLineString)
-	ml.data = make([]float64, 0)
-	ml.offsets = make([]int, 0, len(data))
-	for _, slice := range data {
-		ml.offsets = append(ml.offsets, len(slice))
-		ml.data = append(ml.data, slice...)
-	}
+	ml.data, ml.offsets = deflateD2(data)
+	return ml
+}
 
+func NewMultiLineStringFlat(dims DimsType, data []float64, offsets []int) *MultiLineString {
+	ml := new(MultiLineString)
+	ml.data, ml.offsets = data, offsets
 	return ml
 }
 
