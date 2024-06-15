@@ -1,6 +1,7 @@
 package geom_test
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -25,6 +26,29 @@ func TestEmptyLineString(t *testing.T) {
 	}
 }
 
+func TestXYLineString(t *testing.T) {
+	t.Parallel()
+	testHelperLineString(t, geom.XY, 10)
+}
+
+func TestXYZLineString(t *testing.T) {
+	t.Parallel()
+	testHelperLineString(t, geom.XYZ, 10)
+}
+
+func TestXYMLineString(t *testing.T) {
+	t.Parallel()
+	testHelperLineString(t, geom.XYM, 10)
+}
+
+func TestXYZMLineString(t *testing.T) {
+	t.Parallel()
+	testHelperLineString(t, geom.XYZM, 10)
+}
+
+// ============================================================================
+// Test Helpers ===============================================================
+// ============================================================================
 func testHelperDimString(dim geom.DimsType) string {
 	switch dim {
 	case geom.XY:
@@ -41,11 +65,9 @@ func testHelperDimString(dim geom.DimsType) string {
 }
 
 func testHelperLineString(t *testing.T, dim geom.DimsType, numPoints int) {
-	t.Parallel()
-
 	// Construct data buffer
 	line := geom.NewLineString(dim, nil)
-	buffer := make([]float64, numPoints*line.Stride())
+	buffer := make([]float64, 0, numPoints*line.Stride())
 
 	val := 1.0
 	for i := 0; i < numPoints; i++ {
@@ -67,7 +89,7 @@ func testHelperLineString(t *testing.T, dim geom.DimsType, numPoints int) {
 		)
 	}
 
-	for i := 0; i < (len(buffer) / line.Stride()); i++ {
+	for i := 0; i < numPoints; i++ {
 		point, err := line.PointAt(i)
 		if err != nil {
 			t.Errorf("%s LineString returned error on point access: %s\n",
@@ -80,21 +102,48 @@ func testHelperLineString(t *testing.T, dim geom.DimsType, numPoints int) {
 			t.Errorf("Point %d from %s LineString has incorrect type: %x\n", i, dimStr, point.Type())
 		}
 
-		if point.Dimensions() != geom.XY {
-			t.Errorf("Point %d from %s LineString is has incorrect dimensions: %x\n", i, dimStr, point.Dimensions())
+		if point.Dimensions() != dim {
+			t.Errorf(
+				"Point %d from %s LineString is has incorrect dimensions: %s\n",
+				i, dimStr,
+				testHelperDimString(line.Dimensions()),
+			)
 		}
 
 		if point.Empty() {
 			t.Errorf("Point %d from %s LineString is empty\n", i, dimStr)
 		}
 
+		var (
+			coordStr, pointStr string
+			coordEqual         bool
+		)
 		coord := float64(i) + 1.0
-		if point.X() != coord || point.Y() != coord {
+		switch dim {
+		case geom.XY:
+			coordStr = fmt.Sprintf("%f, %f", coord, coord)
+			pointStr = fmt.Sprintf("%f, %f", point.X(), point.Y())
+			coordEqual = point.X() == coord && point.Y() == coord
+		case geom.XYZ:
+			coordStr = fmt.Sprintf("%f, %f, %f", coord, coord, coord)
+			pointStr = fmt.Sprintf("%f, %f, %f", point.X(), point.Y(), point.Z())
+			coordEqual = point.X() == coord && point.Y() == coord && point.Z() == coord
+		case geom.XYM:
+			coordStr = fmt.Sprintf("%f, %f, %f", coord, coord, coord)
+			pointStr = fmt.Sprintf("%f, %f, %f", point.X(), point.Y(), point.M())
+			coordEqual = point.X() == coord && point.Y() == coord && point.M() == coord
+		case geom.XYZM:
+			coordStr = fmt.Sprintf("%f, %f, %f, %f", coord, coord, coord, coord)
+			pointStr = fmt.Sprintf("%f, %f, %f, %f", point.X(), point.Y(), point.Z(), point.M())
+			coordEqual = point.X() == coord && point.Y() == coord && point.Z() == coord && point.M() == coord
+		}
+
+		if !coordEqual {
 			t.Errorf(
-				"Point %d from %s LineString has incorrect coords: (%f, %f) != (%f, %f)",
+				"Point %d from %s LineString has incorrect coords: %s != %s",
 				i, dimStr,
-				coord, coord,
-				point.X(), point.Y(),
+				coordStr,
+				pointStr,
 			)
 		}
 
@@ -105,97 +154,6 @@ func testHelperLineString(t *testing.T, dim geom.DimsType, numPoints int) {
 				i, dimStr,
 				ptr, &point.Coords()[0],
 			)
-		}
-	}
-
-}
-
-func TestXYLineString(t *testing.T) {
-	t.Parallel()
-
-	buffer := []float64{1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0, 4.0}
-	line := geom.NewLineString(geom.XY, buffer)
-
-	if line.NumPoints() != 4 {
-		t.Errorf("LineString with 4 XY points returned incorrect count: %d\n", line.NumPoints())
-	}
-
-	for i := 0; i < (len(buffer) / line.Stride()); i++ {
-		point, err := line.PointAt(i)
-		if err != nil {
-			t.Errorf("LineString with 4 XY points returned error on access: %s\n", err.Error())
-		}
-
-		if point.Type() != geom.POINT {
-			t.Errorf("Point %d from XY LineString has incorrect type: %x\n", i, point.Type())
-		}
-
-		if point.Dimensions() != geom.XY {
-			t.Errorf("Point %d from XY LineString is has incorrect dimensions: %x\n", i, point.Dimensions())
-		}
-
-		if point.Empty() {
-			t.Errorf("Point %d from XY LineString is empty\n", i)
-		}
-
-		coord := float64(i) + 1.0
-		if point.X() != coord || point.Y() != coord {
-			t.Errorf(
-				"Point %d from XY LineString has incorrect coords: (%f, %f) != (%f, %f)",
-				i,
-				coord, coord,
-				point.X(), point.Y(),
-			)
-		}
-
-		ptr := &buffer[i*line.Stride()]
-		if !reflect.DeepEqual(ptr, &point.Coords()[0]) {
-			t.Errorf("Point %d and XY LineString do not share same backing buffer: %p != %p", i, ptr, &point.Coords()[0])
-		}
-	}
-}
-
-func TestXYZLineString(t *testing.T) {
-	t.Parallel()
-
-	buffer := []float64{1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0, 4.0, 4.0, 4.0}
-	line := geom.NewLineString(geom.XYZ, buffer)
-
-	if line.NumPoints() != 4 {
-		t.Errorf("LineString with 4 XYZ points returned incorrect count: %d\n", line.NumPoints())
-	}
-
-	for i := 0; i < (len(buffer) / line.Stride()); i++ {
-		point, err := line.PointAt(i)
-		if err != nil {
-			t.Errorf("LineString with 4 XYZ points returned error on access: %s\n", err.Error())
-		}
-
-		if point.Type() != geom.POINT {
-			t.Errorf("Point %d from XYZ LineString has incorrect type: %x\n", i, point.Type())
-		}
-
-		if point.Dimensions() != geom.XYZ {
-			t.Errorf("Point %d from XYZ LineString is has incorrect dimensions: %x\n", i, point.Dimensions())
-		}
-
-		if point.Empty() {
-			t.Errorf("Point %d from XYZ LineString is empty\n", i)
-		}
-
-		coord := float64(i) + 1.0
-		if point.X() != coord || point.Y() != coord || point.Z() != coord {
-			t.Errorf(
-				"Point %d from XYZ LineString has incorrect coords: (%f, %f, %f) != (%f, %f, %f)",
-				i,
-				coord, coord, coord,
-				point.X(), point.Y(), point.Z(),
-			)
-		}
-
-		ptr := &buffer[i*line.Stride()]
-		if !reflect.DeepEqual(ptr, &point.Coords()[0]) {
-			t.Errorf("Point %d and XYZ LineString do not share same backing buffer: %p != %p", i, ptr, &point.Coords()[0])
 		}
 	}
 }
