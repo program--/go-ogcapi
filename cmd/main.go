@@ -17,6 +17,7 @@ func main() {
 	mux.HandleFunc("GET /collections/", collectionsHandler)
 	mux.HandleFunc("GET /collections/{collectionId}/", collectionsIdHandler)
 	mux.HandleFunc("GET /collections/{collectionId}/items/", collectionIdItemHandler)
+	mux.Handle("/", http.NotFoundHandler())
 
 	server := &http.Server{
 		Addr:    port,
@@ -28,9 +29,15 @@ func main() {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("index")
-	filePath := staticLocation + "/index.html"
-	http.ServeFile(w, r, filePath)
+	if r.URL.Path != "/" {
+		log.Println("invalid route")
+		filePath := staticLocation + "/404.html"
+		http.ServeFile(w, r, filePath)
+	} else {
+		log.Println("index")
+		filePath := staticLocation + "/index.html"
+		http.ServeFile(w, r, filePath)
+	}
 }
 
 func apiDefinitionHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +52,6 @@ func conformanceHandler(w http.ResponseWriter, r *http.Request) {
 
 func collectionsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("collections"))
-
 }
 
 func collectionsIdHandler(w http.ResponseWriter, r *http.Request) {
