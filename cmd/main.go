@@ -12,11 +12,11 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", indexHandler)
-	mux.HandleFunc("GET /api-definition", apiDefinitionHandler)
-	mux.HandleFunc("GET /conformance", conformanceHandler)
-	mux.HandleFunc("GET /collections", collectionsHandler)
-	mux.HandleFunc("GET /collections/{collectionId}", collectionsIdHandler)
-	mux.HandleFunc("GET /collections/{collectionId}/items", collectionIdItemHandler)
+	mux.HandleFunc("GET /api-definition/", apiDefinitionHandler)
+	mux.HandleFunc("GET /conformance/", conformanceHandler)
+	mux.HandleFunc("GET /collections/", collectionsHandler)
+	mux.HandleFunc("GET /collections/{collectionId}/", collectionsIdHandler)
+	mux.HandleFunc("GET /collections/{collectionId}/items/", collectionIdItemHandler)
 
 	server := &http.Server{
 		Addr:    port,
