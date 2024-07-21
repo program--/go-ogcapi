@@ -20,14 +20,14 @@ func TestEmptyPolygon(t *testing.T) {
 	}
 
 	if empty_poly.NumRings() > 0 {
-		t.Errorf("Empty polygon returned %d NumRings()", empty_poly.NumRings())
+		t.Errorf("Empty polygon returned %d NumRings()\n", empty_poly.NumRings())
 	}
 
 	if empty_poly.NumHoles() > 0 {
-		t.Errorf("Empty polygon returned %d NumHoles()", empty_poly.NumHoles())
+		t.Errorf("Empty polygon returned %d NumHoles()\n", empty_poly.NumHoles())
 	}
 
 	if ring, err := empty_poly.RingAt(0); err == nil {
-		t.Errorf("Empty polygon returned non-nil ring: %v", ring.Coords())
+		t.Errorf("Empty polygon returned non-nil ring: %v\n", ring.Coords())
 	}
 }
