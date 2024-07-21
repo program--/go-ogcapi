@@ -16,7 +16,7 @@ const (
 type DimsType uint8
 
 const (
-	XY = iota
+	XY DimsType = iota
 	XYZ
 	XYM
 	XYZM

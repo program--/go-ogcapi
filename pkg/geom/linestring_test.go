@@ -140,7 +140,7 @@ func testHelperLineString(t *testing.T, dim geom.DimsType, numPoints int) {
 
 		if !coordEqual {
 			t.Errorf(
-				"Point %d from %s LineString has incorrect coords: %s != %s",
+				"Point %d from %s LineString has incorrect coords: %s != %s\n",
 				i, dimStr,
 				coordStr,
 				pointStr,
@@ -150,7 +150,7 @@ func testHelperLineString(t *testing.T, dim geom.DimsType, numPoints int) {
 		ptr := &buffer[i*line.Stride()]
 		if !reflect.DeepEqual(ptr, &point.Coords()[0]) {
 			t.Errorf(
-				"Point %d and %s LineString do not share same backing buffer: %p != %p",
+				"Point %d and %s LineString do not share same backing buffer: %p != %p\n",
 				i, dimStr,
 				ptr, &point.Coords()[0],
 			)

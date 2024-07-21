@@ -26,7 +26,7 @@ func TestEmptyPoint(t *testing.T) {
 	}
 
 	if empty_point.Dimensions() != geom.XY {
-		t.Errorf("Point with dim XY (0) returned %d", empty_point.Dimensions())
+		t.Errorf("Point with dim XY (0) returned %d\n", empty_point.Dimensions())
 	}
 }
 
@@ -56,7 +56,7 @@ func TestXYPoint(t *testing.T) {
 	}
 
 	if point.Stride() != 2 {
-		t.Errorf("Point with dim XY returned stride %d instead of 2", point.Stride())
+		t.Errorf("Point with dim XY returned stride %d instead of 2\n", point.Stride())
 	}
 }
 
@@ -86,7 +86,7 @@ func TestXYZPoint(t *testing.T) {
 	}
 
 	if point.Stride() != 3 {
-		t.Errorf("Point with dim XY returned stride %d instead of 3", point.Stride())
+		t.Errorf("Point with dim XY returned stride %d instead of 3\n", point.Stride())
 	}
 }
 
@@ -116,7 +116,7 @@ func TestXYMPoint(t *testing.T) {
 	}
 
 	if point.Stride() != 3 {
-		t.Errorf("Point with dim XY returned stride %d instead of 3", point.Stride())
+		t.Errorf("Point with dim XY returned stride %d instead of 3\n", point.Stride())
 	}
 }
 
@@ -146,6 +146,6 @@ func TestXYZMPoint(t *testing.T) {
 	}
 
 	if point.Stride() != 4 {
-		t.Errorf("Point with dim XY returned stride %d instead of 4", point.Stride())
+		t.Errorf("Point with dim XY returned stride %d instead of 4\n", point.Stride())
 	}
 }
